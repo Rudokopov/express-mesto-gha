@@ -1,16 +1,23 @@
 const User = require("../models/user")
-const { errChecker } = require("../models/errors")
 
 module.exports.getUser = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) => errChecker(err, res))
+    .catch((err) =>
+      res.send(500, { message: `Произошла неизвестная ошибка ${err.name}` })
+    )
 }
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.id)
     .then((user) => res.send({ data: user }))
-    .catch((err) => errChecker(err, res))
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.send(404, { message: "Пользователь не найден" })
+        return
+      }
+      res.send(500, { message: `Произошла неизвестная ошибка ${err.name}` })
+    })
 }
 
 module.exports.createUser = (req, res) => {
@@ -18,7 +25,13 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) => errChecker(err, res))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.send(400, { message: "Ошибка при отправке данных" })
+        return
+      }
+      res.send(500, { message: `Произошла неизвестная ошибка ${err.name}` })
+    })
 }
 
 module.exports.updateUser = (req, res) => {
@@ -30,7 +43,17 @@ module.exports.updateUser = (req, res) => {
     { new: true, runValidators: true, upsert: true }
   )
     .then(() => res.send({ data: name, about }))
-    .catch((err) => errChecker(err, res))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.send(400, { message: "Ошибка при отправке данных" })
+        return
+      }
+      if (err.name === "CastError") {
+        res.send(404, { message: "Пользователь не найден" })
+        return
+      }
+      res.send(500, { message: `Произошла неизвестная ошибка ${err.name}` })
+    })
 }
 
 module.exports.updateAvatar = (req, res) => {
@@ -42,5 +65,15 @@ module.exports.updateAvatar = (req, res) => {
     { new: true, runValidators: true, upsert: true }
   )
     .then(() => res.send({ data: avatar }))
-    .catch((err) => errChecker(err, res))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.send(400, { message: "Ошибка при отправке данных" })
+        return
+      }
+      if (err.name === "CastError") {
+        res.send(404, { message: "Пользователь не найден" })
+        return
+      }
+      res.send(500, { message: `Произошла неизвестная ошибка ${err.name}` })
+    })
 }

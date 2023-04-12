@@ -1,10 +1,11 @@
 const Card = require("../models/card")
-const { errChecker } = require("../models/errors")
 
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => errChecker(err, res))
+    .catch((err) =>
+      res.send(500, { message: `Произошла неизвестная ошибка ${err.name}` })
+    )
 }
 
 module.exports.createCard = (req, res) => {
@@ -12,14 +13,25 @@ module.exports.createCard = (req, res) => {
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
-    .catch((err) => errChecker(err, res))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.send(400, { message: "Ошибка при отправке данных" })
+        return
+      }
+      res.send(500, { message: `Произошла неизвестная ошибка ${err.name}` })
+    })
 }
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.id)
     .then((card) => res.send({ data: card }))
-    .catch((err) => errChecker(err, res))
-  return
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.send(404, { message: "Указаная карточка не найдена" })
+        return
+      }
+      res.send(500, { message: `Произошла неизвестная ошибка ${err.name}` })
+    })
 }
 
 module.exports.likeCard = (req, res) => {
@@ -29,7 +41,17 @@ module.exports.likeCard = (req, res) => {
     { new: true }
   )
     .then((card) => res.send({ likes: card.likes.length }))
-    .catch((err) => errChecker(err, res))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.send(400, { message: "Ошибка при отправке данных" })
+        return
+      }
+      if (err.name === "CastError") {
+        res.send(404, { message: "Пользователь не найден" })
+        return
+      }
+      res.send(500, { message: `Произошла неизвестная ошибка ${err.name}` })
+    })
 }
 
 module.exports.dislakeCard = (req, res) => {
@@ -39,5 +61,15 @@ module.exports.dislakeCard = (req, res) => {
     { new: true }
   )
     .then((card) => res.send({ likes: card.likes.length }))
-    .catch((err) => errChecker(err, res))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.send(400, { message: "Ошибка при отправке данных" })
+        return
+      }
+      if (err.name === "CastError") {
+        res.send(404, { message: "Пользователь не найден" })
+        return
+      }
+      res.send(500, { message: `Произошла неизвестная ошибка ${err.name}` })
+    })
 }
