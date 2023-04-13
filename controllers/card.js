@@ -1,75 +1,87 @@
 const Card = require("../models/card")
+const { NotFound, BadRequestErr } = require("../customErrors/customErrors")
 
-module.exports.getCards = (req, res) => {
-  Card.find({})
-    .then((cards) => res.send({ data: cards }))
-    .catch((err) =>
-      res.send(500, { message: `Произошла неизвестная ошибка ${err.name}` })
+module.exports.getCards = async (req, res, next) => {
+  try {
+    const response = await Card.find({})
+    res.send(response)
+  } catch (err) {
+    next(err)
+  }
+}
+
+module.exports.createCard = async (req, res, next) => {
+  try {
+    const id = req.user._id
+    const { name, link } = req.body
+    const response = await Card.create({ name, link, owner: id })
+    res.send(response)
+  } catch (err) {
+    if (err.name === "ValidationError") {
+      next(new BadRequestErr("Переданы некорректные данные"))
+      return
+    }
+    next(err)
+  }
+}
+
+module.exports.deleteCard = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const response = await Card.findByIdAndRemove(id)
+    if (!response) {
+      throw new NotFound("Карточка с похожим ID не найдена")
+    }
+    res.send(response)
+  } catch (err) {
+    if (err.name === "CastError") {
+      next(new BadRequestErr("Переданы некорректные данные"))
+      return
+    }
+    next(err)
+  }
+}
+
+module.exports.likeCard = async (req, res, next) => {
+  try {
+    const ownerId = req.user._id
+    const { id } = req.params
+    const response = await Card.findByIdAndUpdate(
+      id,
+      { $addToSet: { likes: ownerId } },
+      { new: true }
     )
+    if (!response) {
+      throw new NotFound("Карточка с похожим ID не найдена")
+    }
+    res.send({ likes: response.likes.length })
+  } catch (err) {
+    if (err.name === "CastError") {
+      next(new BadRequestErr("Переданы некорректные данные"))
+      return
+    }
+    next(err)
+  }
 }
 
-module.exports.createCard = (req, res) => {
-  const { name, link } = req.body
-
-  Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.send(400, { message: "Ошибка при отправке данных" })
-        return
-      }
-      res.send(500, { message: `Произошла неизвестная ошибка ${err.name}` })
-    })
-}
-
-module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.name === "CastError") {
-        res.send(404, { message: "Указаная карточка не найдена" })
-        return
-      }
-      res.send(500, { message: `Произошла неизвестная ошибка ${err.name}` })
-    })
-}
-
-module.exports.likeCard = (req, res) => {
-  Card.findByIdAndUpdate(
-    req.params.id,
-    { $addToSet: { likes: req.user._id } },
-    { new: true }
-  )
-    .then((card) => res.send({ likes: card.likes.length }))
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.send(400, { message: "Ошибка при отправке данных" })
-        return
-      }
-      if (err.name === "CastError") {
-        res.send(404, { message: "Пользователь не найден" })
-        return
-      }
-      res.send(500, { message: `Произошла неизвестная ошибка ${err.name}` })
-    })
-}
-
-module.exports.dislakeCard = (req, res) => {
-  Card.findByIdAndUpdate(
-    req.params.id,
-    { $pull: { likes: req.user._id } },
-    { new: true }
-  )
-    .then((card) => res.send({ likes: card.likes.length }))
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.send(400, { message: "Ошибка при отправке данных" })
-        return
-      }
-      if (err.name === "CastError") {
-        res.send(404, { message: "Пользователь не найден" })
-        return
-      }
-      res.send(500, { message: `Произошла неизвестная ошибка ${err.name}` })
-    })
+module.exports.dislakeCard = async (req, res, next) => {
+  try {
+    const ownerId = req.user._id
+    const { id } = req.params
+    const response = await Card.findByIdAndUpdate(
+      id,
+      { $pull: { likes: req.user._id } },
+      { new: true }
+    )
+    if (!response) {
+      throw new NotFound("Карточка с похожим ID не найдена")
+    }
+    res.send({ likes: response.likes.length })
+  } catch (err) {
+    if (err.name === "CastError") {
+      next(new BadRequestErr("Переданы некорректные данные"))
+      return
+    }
+    next(err)
+  }
 }
