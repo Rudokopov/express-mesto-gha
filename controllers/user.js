@@ -1,5 +1,6 @@
 const User = require("../models/user")
-const { NotFound, BadRequestErr } = require("../customErrors/customErrors")
+const mongoose = require("mongoose")
+const { NotFound, BadRequestError } = require("../customErrors/customErrors")
 
 module.exports.getUser = async (req, res, next) => {
   try {
@@ -20,8 +21,8 @@ module.exports.getUserById = async (req, res, next) => {
     }
     res.send(response)
   } catch (err) {
-    if (err.name === "CastError") {
-      next(new BadRequestErr("Переданы некорректные данные"))
+    if (err instanceof mongoose.Error.CastError) {
+      next(new BadRequestError("Переданы некорректные данные"))
       return
     }
     next(err)
@@ -32,12 +33,12 @@ module.exports.createUser = async (req, res, next) => {
   try {
     const { name, about, avatar } = req.body
     const response = await User.create({ name, about, avatar })
-    res.send(200, {
+    res.send(201, {
       data: response,
     })
   } catch (err) {
-    if (err.name === "ValidationError") {
-      next(new BadRequestErr("Переданы некорректные данные"))
+    if (err instanceof mongoose.Error.ValidationError) {
+      next(new BadRequestError("Переданы некорректные данные"))
       return
     }
     next(err)
@@ -59,8 +60,8 @@ module.exports.updateUser = async (req, res, next) => {
     }
     res.send(response)
   } catch (err) {
-    if (err.name === "ValidationError") {
-      next(new BadRequestErr("Переданы некорректные данные"))
+    if (err instanceof mongoose.Error.ValidationError) {
+      next(new BadRequestError("Переданы некорректные данные"))
       return
     }
     next(err)
@@ -82,8 +83,8 @@ module.exports.updateAvatar = async (req, res, next) => {
     }
     res.send({ avatar: response.avatar })
   } catch (err) {
-    if (err.name === "ValidationError") {
-      next(new BadRequestErr("Переданы некорректные данные"))
+    if (err instanceof mongoose.Error.ValidationError) {
+      next(new BadRequestError("Переданы некорректные данные"))
       return
     }
     next(err)

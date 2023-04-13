@@ -1,6 +1,5 @@
 {
   "env": {
-    "browser": true,
     "es2021": true
   },
   "extends": [
@@ -23,6 +22,6 @@
   "plugins": ["react"],
   "rules": {
     "react/jsx-filename-extension": [1, { "extensions": [" js", " js×"] }],
-    "allow": ["foo_", "_bar"]
+    "no-underscore-dangle": ["error", { "allow": ["_id"] }]
   }
 }

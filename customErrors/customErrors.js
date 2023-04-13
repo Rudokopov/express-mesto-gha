@@ -1,17 +1,17 @@
 class NotFound extends Error {
   constructor(message) {
     super(message)
-    this.name = "Not Found"
+    this.name = "NotFound"
     this.statusCode = 404
   }
 }
 
-class BadRequestErr extends Error {
+class BadRequestError extends Error {
   constructor(message) {
     super(message)
-    this.name = "Bad request"
+    this.name = "CastError"
     this.statusCode = 400
   }
 }
 
-module.exports = { NotFound, BadRequestErr }
+module.exports = { NotFound, BadRequestError }
