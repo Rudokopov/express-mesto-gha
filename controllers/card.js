@@ -1,5 +1,6 @@
 const Card = require("../models/card")
-const { NotFound, BadRequestErr } = require("../customErrors/customErrors")
+const mongoose = require("mongoose")
+const { NotFound, BadRequestError } = require("../customErrors/customErrors")
 
 module.exports.getCards = async (req, res, next) => {
   try {
@@ -14,13 +15,14 @@ module.exports.createCard = async (req, res, next) => {
   try {
     const id = req.user._id
     const { name, link } = req.body
-    const response = await Card.create({ name, link, owner: id }).populate([
-      "owner",
-    ])
+    const response = await (
+      await Card.create({ name, link, owner: id })
+    ).populate(["owner"])
+
     res.send(response)
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
-      next(new BadRequestErr("Переданы некорректные данные"))
+      next(new BadRequestError("Переданы некорректные данные"))
       return
     }
     next(err)
@@ -40,7 +42,7 @@ module.exports.deleteCard = async (req, res, next) => {
     res.send(response)
   } catch (err) {
     if (err instanceof mongoose.Error.CastError) {
-      next(new BadRequestErr("Переданы некорректные данные"))
+      next(new BadRequestError("Переданы некорректные данные"))
       return
     }
     next(err)
@@ -62,7 +64,7 @@ module.exports.likeCard = async (req, res, next) => {
     res.send({ likes: response.likes.length })
   } catch (err) {
     if (err instanceof mongoose.Error.CastError) {
-      next(new BadRequestErr("Переданы некорректные данные"))
+      next(new BadRequestError("Переданы некорректные данные"))
       return
     }
     next(err)
@@ -71,7 +73,6 @@ module.exports.likeCard = async (req, res, next) => {
 
 module.exports.dislakeCard = async (req, res, next) => {
   try {
-    const ownerId = req.user._id
     const { id } = req.params
     const response = await Card.findByIdAndUpdate(
       id,
@@ -84,7 +85,7 @@ module.exports.dislakeCard = async (req, res, next) => {
     res.send({ likes: response.likes.length })
   } catch (err) {
     if (err instanceof mongoose.Error.CastError) {
-      next(new BadRequestErr("Переданы некорректные данные"))
+      next(new BadRequestError("Переданы некорректные данные"))
       return
     }
     next(err)

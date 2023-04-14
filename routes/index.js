@@ -27,11 +27,11 @@ router.put("/cards/:id/likes", likeCard)
 router.delete("/cards/:id/likes", dislakeCard)
 
 // Роуты юзера
-router.get("/user", getUser)
-router.get("/user/:id", getUserById)
-router.post("/user", createUser)
-router.patch("/user/me", updateUser)
-router.patch("/user/me/avatar", updateAvatar)
+router.get("/users", getUser)
+router.get("/users/:id", getUserById)
+router.post("/users", createUser)
+router.patch("/users/me", updateUser)
+router.patch("/users/me/avatar", updateAvatar)
 
 router.all("*", (req, res, next) => {
   next(new NotFound("Такого адреса не существует"))
