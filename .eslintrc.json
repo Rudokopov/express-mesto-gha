@@ -1,17 +1,13 @@
 {
   "env": {
-    "browser": true,
     "es2021": true
   },
 
   "extends": [
     "eslint: recommended",
-    "plugin: react/recommended",
-    "plugin: react -hooks/recommended",
     "plugin: jsx-ally/recommended",
     "plugin: import/recommended",
-    "airbnb",
-    "plugin: react/jsx-runtime",
+    "airbnb-base",
     "prettier"
   ],
 
@@ -24,7 +20,6 @@
   },
   "plugins": ["react"],
   "rules": {
-    "react/jsx-filename-extension": [1, { "extensions": [" js", " jsÃ—"] }],
-    "allow": ["foo_", "_bar"]
+    "no-underscore-dangle": ["error", { "allow": ["_id"] }]
   }
 }
