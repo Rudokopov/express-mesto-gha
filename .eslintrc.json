@@ -1,24 +1,43 @@
 {
   "env": {
-    "es2021": true,
-    "commonjs": true
+    "browser": true,
+
+    "es2021": true
   },
+
   "extends": [
     "eslint: recommended",
+
+    "plugin: react/recommended",
+
+    "plugin: react -hooks/recommended",
+
     "plugin: jsx-ally/recommended",
+
     "plugin: import/recommended",
-    "airbnb-base",
+
+    "airbnb",
+
+    "plugin: react/jsx-runtime",
+
     "prettier"
   ],
+
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
     },
+
     "ecmaVersion": 12,
+
     "sourceType": "module"
   },
+
+  "plugins": ["react"],
+
   "rules": {
-    "react/jsx-filename-extension": [1, { "extensions": [" js", " js×"] }],
-    "no-underscore-dangle": ["error", { "allow": ["_id"] }]
+    "react/jsx-filename-extension": [1, { "extensions": [" js", " jsÃ—"] }],
+
+    "allow": ["foo_", "_bar"]
   }
 }
