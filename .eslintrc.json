@@ -5,7 +5,6 @@
 
   "extends": [
     "eslint: recommended",
-    "plugin: jsx-ally/recommended",
     "plugin: import/recommended",
     "airbnb-base",
     "prettier"
