@@ -13,13 +13,6 @@ app.use(express.urlencoded({ extended: true }))
 
 mongoose.connect("mongodb://localhost:27017/mestodb")
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "64369cda4d63fdeb810f9ed4",
-  }
-  next()
-})
-
 app.use(routes)
 
 app.use(errors())

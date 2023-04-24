@@ -13,7 +13,7 @@ module.exports.getCards = async (req, res, next) => {
 
 module.exports.createCard = async (req, res, next) => {
   try {
-    const id = req.user._id
+    const id = req.userId
     const { name, link } = req.body
     const response = await (
       await Card.create({ name, link, owner: id })
@@ -31,11 +31,16 @@ module.exports.createCard = async (req, res, next) => {
 
 module.exports.deleteCard = async (req, res, next) => {
   try {
+    const userId = req.userId
     const { id } = req.params
-    const response = await Card.findByIdAndRemove(id).populate([
-      "owner",
-      "likes",
-    ])
+    const response = await Card.findByIdAndRemove(id)
+      .populate(["owner", "likes"])
+      .then((card) => {
+        if (!card.owner === userId) {
+          throw new Error("У вас нет прав на это")
+        }
+      })
+      .catch(next(err))
     if (!response) {
       throw new NotFound("Карточка с похожим ID не найдена")
     }
@@ -51,7 +56,7 @@ module.exports.deleteCard = async (req, res, next) => {
 
 module.exports.likeCard = async (req, res, next) => {
   try {
-    const ownerId = req.user._id
+    const ownerId = req.userId
     const { id } = req.params
     const response = await Card.findByIdAndUpdate(
       id,
@@ -76,7 +81,7 @@ module.exports.dislakeCard = async (req, res, next) => {
     const { id } = req.params
     const response = await Card.findByIdAndUpdate(
       id,
-      { $pull: { likes: req.user._id } },
+      { $pull: { likes: req.userId } },
       { new: true }
     )
     if (!response) {
