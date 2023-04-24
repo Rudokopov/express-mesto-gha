@@ -33,18 +33,28 @@ module.exports.deleteCard = async (req, res, next) => {
   try {
     const userId = req.userId
     const { id } = req.params
-    const response = await Card.findByIdAndRemove(id)
+    const card = await Card.findById(id)
       .populate(["owner", "likes"])
       .then((card) => {
-        if (!card.owner === userId) {
-          throw new Error("У вас нет прав на это")
+        console.log(Boolean(card.owner.id === userId)) // рабочее правило
+        if (!card.owner._id === userId) {
+          throw new Error("У вас нет доступа на это")
         }
+        return card
       })
-      .catch(next(err))
-    if (!response) {
-      throw new NotFound("Карточка с похожим ID не найдена")
-    }
-    res.send(response)
+      .catch((err) => console.log(err))
+    res.send(200, "Успешно")
+
+    // if (card) {
+    //   const response = await Card.findByIdAndRemove(card).populate([
+    //     "owner",
+    //     "likes",
+    //   ])
+    //   if (!response) {
+    //     throw new NotFound("Карточка с похожим ID не найдена")
+    //   }
+    //   res.send(response)
+    // }
   } catch (err) {
     if (err instanceof mongoose.Error.CastError) {
       next(new BadRequestError("Переданы некорректные данные"))
