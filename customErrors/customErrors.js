@@ -22,4 +22,12 @@ class NoAccessError extends Error {
   }
 }
 
-module.exports = { NotFound, BadRequestError, NoAccessError }
+class UniqueError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = "UniqueError"
+    this.statusCode = 401
+  }
+}
+
+module.exports = { NotFound, BadRequestError, NoAccessError, UniqueError }

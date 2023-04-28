@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt")
 const {
   NotFound,
   BadRequestError,
-  NoAccessError,
+  UniqueError,
 } = require("../customErrors/customErrors")
 
 module.exports.getUser = async (req, res, next) => {
