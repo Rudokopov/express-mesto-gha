@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken")
-const { AccessError } = require("../customErrors/customErrors")
+const { ReferenceError } = require("../customErrors/customErrors")
 
 module.exports.checkAuth = async (req, res, next) => {
   const token = (req.headers.authorization || "").replace(/Bearer\s/, "")
@@ -8,7 +8,7 @@ module.exports.checkAuth = async (req, res, next) => {
     req.userId = decoded._id
     next()
   } catch (err) {
-    next(new AccessError("У вас нет доступа"))
+    next(new ReferenceError("У вас нет доступа"))
     return
   }
 }
