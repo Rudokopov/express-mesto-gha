@@ -6,6 +6,7 @@ const {
   NotFound,
   BadRequestError,
   UniqueError,
+  ReferenceError,
 } = require("../customErrors/customErrors")
 
 module.exports.getUser = async (req, res, next) => {
@@ -84,9 +85,8 @@ module.exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body
     const user = await User.findOne({ email }).select("+passwordHash")
-
     if (!user) {
-      throw new NoAccessError("Пользователь не найден")
+      throw new ReferenceError("Пользователь не найден")
     }
     const isValid = await bcrypt.compare(password, user._doc.passwordHash)
     if (!isValid) {

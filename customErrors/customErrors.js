@@ -14,7 +14,15 @@ class BadRequestError extends Error {
   }
 }
 
-class NoAccessError extends Error {
+class AccessError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = "AcessError"
+    this.statusCode = 403
+  }
+}
+
+class ReferenceError extends Error {
   constructor(message) {
     super(message)
     this.name = "ReferenceError"
@@ -30,4 +38,10 @@ class UniqueError extends Error {
   }
 }
 
-module.exports = { NotFound, BadRequestError, NoAccessError, UniqueError }
+module.exports = {
+  NotFound,
+  BadRequestError,
+  AccessError,
+  UniqueError,
+  ReferenceError,
+}

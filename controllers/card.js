@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 const {
   NotFound,
   BadRequestError,
-  NoAccessError,
+  AccessError,
 } = require("../customErrors/customErrors")
 
 module.exports.getCards = async (req, res, next) => {
@@ -39,7 +39,7 @@ module.exports.deleteCard = async (req, res, next) => {
     const { id } = req.params
     const card = await Card.findById(id).populate(["owner", "likes"])
     if (!card) {
-      throw new BadRequestError("Карточка с таким ID не найдена")
+      throw new NotFound("Карточка с таким ID не найдена")
     }
     if (card.owner.id === userId) {
       const response = await Card.findByIdAndRemove(id).populate([
@@ -48,7 +48,7 @@ module.exports.deleteCard = async (req, res, next) => {
       ])
       res.send(response)
     }
-    throw new NoAccessError("У вас нет на это прав")
+    throw new AccessError("У вас нет на это прав")
   } catch (err) {
     next(err)
   }
