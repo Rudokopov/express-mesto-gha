@@ -86,7 +86,7 @@ module.exports.login = async (req, res, next) => {
     const user = await User.findOne({ email }).select("+passwordHash")
 
     if (!user) {
-      throw new NotFound("Пользователь не найден")
+      throw new NoAccessError("Пользователь не найден")
     }
     const isValid = await bcrypt.compare(password, user._doc.passwordHash)
     if (!isValid) {
@@ -117,7 +117,7 @@ module.exports.login = async (req, res, next) => {
 
 module.exports.updateUser = async (req, res, next) => {
   try {
-    const id = req.user._id
+    const id = req.userId
     const { name, about } = req.body
     const response = await User.findByIdAndUpdate(
       id,
@@ -140,7 +140,7 @@ module.exports.updateUser = async (req, res, next) => {
 
 module.exports.updateAvatar = async (req, res, next) => {
   try {
-    const id = req.user._id
+    const id = req.userId
     const { avatar } = req.body
     const response = await User.findByIdAndUpdate(
       id,
