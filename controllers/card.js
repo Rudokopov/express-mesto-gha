@@ -1,6 +1,10 @@
 const Card = require("../models/card")
 const mongoose = require("mongoose")
-const { NotFound, BadRequestError } = require("../customErrors/customErrors")
+const {
+  NotFound,
+  BadRequestError,
+  NoAccessError,
+} = require("../customErrors/customErrors")
 
 module.exports.getCards = async (req, res, next) => {
   try {
@@ -33,33 +37,19 @@ module.exports.deleteCard = async (req, res, next) => {
   try {
     const userId = req.userId
     const { id } = req.params
-    const card = await Card.findById(id)
-      .populate(["owner", "likes"])
-      .then((card) => {
-        console.log(Boolean(card.owner.id === userId)) // рабочее правило
-        if (!card.owner._id === userId) {
-          throw new Error("У вас нет доступа на это")
-        }
-        return card
-      })
-      .catch((err) => console.log(err))
-    res.send(200, "Успешно")
-
-    // if (card) {
-    //   const response = await Card.findByIdAndRemove(card).populate([
-    //     "owner",
-    //     "likes",
-    //   ])
-    //   if (!response) {
-    //     throw new NotFound("Карточка с похожим ID не найдена")
-    //   }
-    //   res.send(response)
-    // }
-  } catch (err) {
-    if (err instanceof mongoose.Error.CastError) {
-      next(new BadRequestError("Переданы некорректные данные"))
-      return
+    const card = await Card.findById(id).populate(["owner", "likes"])
+    if (!card) {
+      throw new BadRequestError("Карточка с таким ID не найдена")
     }
+    if (card.owner.id === userId) {
+      const response = await Card.findByIdAndRemove(id).populate([
+        "owner",
+        "likes",
+      ])
+      res.send(response)
+    }
+    throw new NoAccessError("У вас нет на это прав")
+  } catch (err) {
     next(err)
   }
 }

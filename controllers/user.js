@@ -2,7 +2,11 @@ const User = require("../models/user")
 const mongoose = require("mongoose")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
-const { NotFound, BadRequestError } = require("../customErrors/customErrors")
+const {
+  NotFound,
+  BadRequestError,
+  NoAccessError,
+} = require("../customErrors/customErrors")
 
 module.exports.getUser = async (req, res, next) => {
   try {
@@ -17,7 +21,6 @@ module.exports.getUserById = async (req, res, next) => {
   try {
     const { id } = req.params
     const response = await User.findById(id)
-
     if (!response) {
       throw new NotFound("Пользователь с похожим id не найден")
     }
@@ -69,6 +72,10 @@ module.exports.createUser = async (req, res, next) => {
       next(new BadRequestError("Переданы некорректные данные"))
       return
     }
+    if (err.code === 11000) {
+      next(new UniqueError("Такой email уже зарегестрирован"))
+      return
+    }
     next(err)
   }
 }
@@ -76,7 +83,7 @@ module.exports.createUser = async (req, res, next) => {
 module.exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email }).select("+passwordHash")
 
     if (!user) {
       throw new NotFound("Пользователь не найден")

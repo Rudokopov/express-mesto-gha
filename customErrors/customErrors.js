@@ -14,4 +14,12 @@ class BadRequestError extends Error {
   }
 }
 
-module.exports = { NotFound, BadRequestError }
+class NoAccessError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = "ReferenceError"
+    this.statusCode = 401
+  }
+}
+
+module.exports = { NotFound, BadRequestError, NoAccessError }
