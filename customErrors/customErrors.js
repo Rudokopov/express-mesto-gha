@@ -26,7 +26,7 @@ class UniqueError extends Error {
   constructor(message) {
     super(message)
     this.name = "UniqueError"
-    this.statusCode = 401
+    this.statusCode = 409
   }
 }
 
