@@ -23,7 +23,7 @@ module.exports.createCard = async (req, res, next) => {
       await Card.create({ name, link, owner: id })
     ).populate(["owner"])
 
-    res.send(response)
+    res.send(201, response)
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError("Переданы некорректные данные"))
@@ -42,11 +42,11 @@ module.exports.deleteCard = async (req, res, next) => {
       throw new NotFound("Карточка с таким ID не найдена")
     }
     if (card.owner.id === userId) {
-      const response = await Card.findByIdAndRemove(id).populate([
+      const response = await Card.findOneAndDelete(card).populate([
         "owner",
         "likes",
       ])
-      res.send(response)
+      res.send(201, response)
     }
     throw new AccessError("У вас нет на это прав")
   } catch (err) {

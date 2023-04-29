@@ -45,10 +45,6 @@ module.exports.getUserMe = async (req, res, next) => {
     }
     res.send(response)
   } catch (err) {
-    if (err instanceof mongoose.Error.CastError) {
-      next(new BadRequestError("Переданы некорректные данные"))
-      return
-    }
     next(err)
   }
 }
@@ -65,9 +61,10 @@ module.exports.createUser = async (req, res, next) => {
       email,
       passwordHash: hash,
     })
-    res.send(201, {
-      data: response,
-    })
+    const result = response.toObject()
+    delete result.passwordHash
+
+    res.send(201, { data: result })
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError("Переданы некорректные данные"))
@@ -90,7 +87,7 @@ module.exports.login = async (req, res, next) => {
     }
     const isValid = await bcrypt.compare(password, user._doc.passwordHash)
     if (!isValid) {
-      throw new NotFound("Неправильные почта или пароль")
+      throw new AccessError("Неправильные почта или пароль")
     }
     const token = jwt.sign(
       {
