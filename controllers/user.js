@@ -1,15 +1,15 @@
-const User = require("../models/user")
-const mongoose = require("mongoose")
-const jwt = require("jsonwebtoken")
-const bcrypt = require("bcrypt")
-const {
+import User from "../models/user.js"
+import mongoose from "mongoose"
+import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt"
+import {
   NotFound,
   BadRequestError,
   UniqueError,
   ReferenceError,
-} = require("../customErrors/customErrors")
+} from "../customErrors/customErrors.js"
 
-module.exports.getUser = async (req, res, next) => {
+const getUser = async (req, res, next) => {
   try {
     const response = await User.find({})
     res.send(response)
@@ -18,7 +18,7 @@ module.exports.getUser = async (req, res, next) => {
   }
 }
 
-module.exports.getUserById = async (req, res, next) => {
+const getUserById = async (req, res, next) => {
   try {
     const { id } = req.params
     const response = await User.findById(id)
@@ -35,7 +35,7 @@ module.exports.getUserById = async (req, res, next) => {
   }
 }
 
-module.exports.getUserMe = async (req, res, next) => {
+const getUserMe = async (req, res, next) => {
   try {
     const id = req.userId
     const response = await User.findById(id)
@@ -49,7 +49,7 @@ module.exports.getUserMe = async (req, res, next) => {
   }
 }
 
-module.exports.createUser = async (req, res, next) => {
+const createUser = async (req, res, next) => {
   try {
     const { name, about, avatar, email, password } = req.body
     const salt = await bcrypt.genSalt(10)
@@ -78,7 +78,7 @@ module.exports.createUser = async (req, res, next) => {
   }
 }
 
-module.exports.login = async (req, res, next) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body
     const user = await User.findOne({ email }).select("+passwordHash")
@@ -112,7 +112,7 @@ module.exports.login = async (req, res, next) => {
   }
 }
 
-module.exports.updateUser = async (req, res, next) => {
+const updateUser = async (req, res, next) => {
   try {
     const id = req.userId
     const { name, about } = req.body
@@ -135,7 +135,7 @@ module.exports.updateUser = async (req, res, next) => {
   }
 }
 
-module.exports.updateAvatar = async (req, res, next) => {
+const updateAvatar = async (req, res, next) => {
   try {
     const id = req.userId
     const { avatar } = req.body
@@ -156,4 +156,14 @@ module.exports.updateAvatar = async (req, res, next) => {
     }
     next(err)
   }
+}
+
+export {
+  getUser,
+  getUserById,
+  getUserMe,
+  createUser,
+  login,
+  updateUser,
+  updateAvatar,
 }

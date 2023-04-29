@@ -1,17 +1,20 @@
-const router = require("express").Router()
-const { NotFound } = require("../customErrors/customErrors")
+import express from "express"
+import { NotFound } from "../customErrors/customErrors.js"
+import { checkAuth } from "../middlewares/auth.js"
+
+const router = express.Router()
 
 // Импорт контроллеров для карточек
-const {
+import {
   getCards,
   createCard,
   deleteCard,
   likeCard,
   dislakeCard,
-} = require("../controllers/card")
+} from "../controllers/card.js"
 
 // Импорт контроллеров для юзера
-const {
+import {
   getUser,
   createUser,
   login,
@@ -19,10 +22,10 @@ const {
   getUserMe,
   updateUser,
   updateAvatar,
-} = require("../controllers/user")
+} from "../controllers/user.js"
 
 // Импорт контроллера ошибок
-const {
+import {
   validateRegister,
   validateLogin,
   validateCreateCard,
@@ -30,9 +33,7 @@ const {
   validateCardId,
   validateProfile,
   validateAvatar,
-} = require("../middlewares/handleErrors")
-
-const { checkAuth } = require("../middlewares/auth")
+} from "../middlewares/handleErrors.js"
 
 // Роуты для карточек
 router.get("/cards", checkAuth, getCards)
@@ -54,4 +55,4 @@ router.all("*", (req, res, next) => {
   next(new NotFound("Такого адреса не существует"))
 })
 
-module.exports = router
+export { router }

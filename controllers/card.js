@@ -1,12 +1,12 @@
-const Card = require("../models/card")
-const mongoose = require("mongoose")
-const {
+import Card from "../models/card.js"
+import mongoose from "mongoose"
+import {
   NotFound,
   BadRequestError,
   AccessError,
-} = require("../customErrors/customErrors")
+} from "../customErrors/customErrors.js"
 
-module.exports.getCards = async (req, res, next) => {
+const getCards = async (req, res, next) => {
   try {
     const response = await Card.find({}).populate(["owner", "likes"])
     res.send(response)
@@ -15,7 +15,7 @@ module.exports.getCards = async (req, res, next) => {
   }
 }
 
-module.exports.createCard = async (req, res, next) => {
+const createCard = async (req, res, next) => {
   try {
     const id = req.userId
     const { name, link } = req.body
@@ -33,7 +33,7 @@ module.exports.createCard = async (req, res, next) => {
   }
 }
 
-module.exports.deleteCard = async (req, res, next) => {
+const deleteCard = async (req, res, next) => {
   try {
     const userId = req.userId
     const { id } = req.params
@@ -51,7 +51,7 @@ module.exports.deleteCard = async (req, res, next) => {
   }
 }
 
-module.exports.likeCard = async (req, res, next) => {
+const likeCard = async (req, res, next) => {
   try {
     const ownerId = req.userId
     const { id } = req.params
@@ -73,7 +73,7 @@ module.exports.likeCard = async (req, res, next) => {
   }
 }
 
-module.exports.dislakeCard = async (req, res, next) => {
+const dislakeCard = async (req, res, next) => {
   try {
     const { id } = req.params
     const response = await Card.findByIdAndUpdate(
@@ -93,3 +93,5 @@ module.exports.dislakeCard = async (req, res, next) => {
     next(err)
   }
 }
+
+export { getCards, createCard, deleteCard, likeCard, dislakeCard }

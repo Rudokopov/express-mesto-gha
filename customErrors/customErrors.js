@@ -38,10 +38,4 @@ class UniqueError extends Error {
   }
 }
 
-module.exports = {
-  NotFound,
-  BadRequestError,
-  AccessError,
-  UniqueError,
-  ReferenceError,
-}
+export { NotFound, BadRequestError, AccessError, UniqueError, ReferenceError }

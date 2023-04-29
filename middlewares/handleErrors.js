@@ -1,9 +1,9 @@
-const { Joi, celebrate } = require("celebrate")
+import { Joi, celebrate } from "celebrate"
 
 const checkLink =
   /^((ftp|http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9\-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-\/])*)?/
 
-module.exports.handleErrors = (err, req, res, next) => {
+const handleErrors = (err, req, res, next) => {
   const { statusCode = 500 } = err
   let { message } = err
 
@@ -14,7 +14,7 @@ module.exports.handleErrors = (err, req, res, next) => {
   res.send(statusCode, { message })
 }
 
-module.exports.validateRegister = celebrate({
+const validateRegister = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
@@ -25,41 +25,52 @@ module.exports.validateRegister = celebrate({
   }),
 })
 
-module.exports.validateLogin = celebrate({
+const validateLogin = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
 })
 
-module.exports.validateCreateCard = celebrate({
+const validateCreateCard = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     link: Joi.string().required().pattern(checkLink),
   }),
 })
 
-module.exports.validateId = celebrate({
+const validateId = celebrate({
   params: Joi.object().keys({
     id: Joi.string().required().hex().length(24),
   }),
 })
 
-module.exports.validateCardId = celebrate({
+const validateCardId = celebrate({
   params: Joi.object().keys({
     id: Joi.string().required().hex().length(24),
   }),
 })
 
-module.exports.validateProfile = celebrate({
+const validateProfile = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2).max(30),
   }),
 })
 
-module.exports.validateAvatar = celebrate({
+const validateAvatar = celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().required().pattern(checkLink),
   }),
 })
+
+export {
+  handleErrors,
+  validateRegister,
+  validateLogin,
+  validateCreateCard,
+  validateId,
+  validateCardId,
+  validateProfile,
+  validateAvatar,
+}

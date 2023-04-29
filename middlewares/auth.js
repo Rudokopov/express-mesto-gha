@@ -1,7 +1,7 @@
-const jwt = require("jsonwebtoken")
-const { ReferenceError } = require("../customErrors/customErrors")
+import jwt from "jsonwebtoken"
+import { ReferenceError } from "../customErrors/customErrors.js"
 
-module.exports.checkAuth = async (req, res, next) => {
+const checkAuth = async (req, res, next) => {
   const t = req.headers.authorization
   if (!t) {
     return next(new ReferenceError("У вас нет доступа"))
@@ -16,3 +16,5 @@ module.exports.checkAuth = async (req, res, next) => {
     return
   }
 }
+
+export { checkAuth }

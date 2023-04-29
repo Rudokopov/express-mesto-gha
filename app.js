@@ -1,21 +1,19 @@
-const path = require("path")
-const express = require("express")
-const mongoose = require("mongoose")
-const routes = require("./routes/index")
-const { errors } = require("celebrate")
-const { handleErrors } = require("./middlewares/handleErrors")
-
-const { PORT = 3000 } = process.env
+import express from "express"
+import mongoose from "mongoose"
+import { router } from "./routes/index.js"
+import celebrate from "celebrate"
+import { handleErrors } from "./middlewares/handleErrors.js"
+import { PORT, DATA_BASE } from "./config.js"
 
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-mongoose.connect("mongodb://localhost:27017/mestodb")
+mongoose.connect(DATA_BASE)
 
-app.use(routes)
+app.use(router)
 
-app.use(errors())
+app.use(celebrate.errors())
 app.use(handleErrors)
 
 app.listen(PORT, () => {
