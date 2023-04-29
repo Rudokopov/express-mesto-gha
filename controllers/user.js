@@ -9,6 +9,15 @@ import {
   ReferenceError,
 } from "../customErrors/customErrors.js"
 
+const searchUser = async (req) => {
+  const id = req.userId
+  const result = await User.findById(id)
+  if (!result) {
+    return false
+  }
+  return result
+}
+
 const getUser = async (req, res, next) => {
   try {
     const response = await User.find({})
@@ -37,9 +46,7 @@ const getUserById = async (req, res, next) => {
 
 const getUserMe = async (req, res, next) => {
   try {
-    const id = req.userId
-    const response = await User.findById(id)
-
+    const response = await searchUser(req)
     if (!response) {
       throw new NotFound("Пользователь с похожим id не найден")
     }
@@ -112,20 +119,28 @@ const login = async (req, res, next) => {
   }
 }
 
-const updateUser = async (req, res, next) => {
+// Не понимаю куда и для чего этот аппендекс в виде data нужен, типа в контроллере понятно, как контекст для остальных аргументов
+// А тут куда ее вставлять? Пробовал распарсить {name, about, avatar} = data, но у меня прилетает undefined, только с req могу
+// С кешем совсем запутался, мне же тут не надо кешировать запрос, верно?
+
+// И по поводу объеденения логики поиска юзера в отдельной функции, пришлось усложнить конструкцию этой функции
+// Поскольку после обновления данных, приходится искать снова юзера и уже после этого выводить обновленные данные
+// Но возможно это я криво реализовал и можно было все сделать проще, очень жду вашего фидбека :)
+const updateProfile = async (req, res, next, data) => {
   try {
-    const id = req.userId
-    const { name, about } = req.body
-    const response = await User.findByIdAndUpdate(
-      id,
-      { name, about },
-      { new: true, runValidators: true }
-    )
-    if (!response) {
+    const { name, about, avatar } = req.body
+    const user = await searchUser(req)
+    if (!user) {
       next(new NotFound("Пользователь с похожим ID не найден"))
       return
     }
-    res.send(response)
+    await User.updateOne(
+      user,
+      { name, about, avatar },
+      { new: true, runValidators: true }
+    )
+    const result = await searchUser(req)
+    res.send(result)
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError("Переданы некорректные данные"))
@@ -135,27 +150,14 @@ const updateUser = async (req, res, next) => {
   }
 }
 
-const updateAvatar = async (req, res, next) => {
-  try {
-    const id = req.userId
-    const { avatar } = req.body
-    const response = await User.findByIdAndUpdate(
-      id,
-      { avatar },
-      { new: true, runValidators: true }
-    )
-    if (!response) {
-      next(new NotFound("Пользователь с похожим ID не найден"))
-      return
-    }
-    res.send({ avatar: response.avatar })
-  } catch (err) {
-    if (err instanceof mongoose.Error.ValidationError) {
-      next(new BadRequestError("Переданы некорректные данные"))
-      return
-    }
-    next(err)
-  }
+const updateUser = (req, res, next) => {
+  const data = req.body
+  return updateProfile.call(data, req, res, next)
+}
+
+const updateAvatar = (req, res, next) => {
+  const data = req.body
+  return updateProfile.call(data, req, res, next)
 }
 
 export {
