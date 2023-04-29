@@ -41,14 +41,11 @@ module.exports.deleteCard = async (req, res, next) => {
     if (!card) {
       throw new NotFound("Карточка с таким ID не найдена")
     }
-    if (card.owner.id === userId) {
-      const response = await Card.findOneAndDelete(card).populate([
-        "owner",
-        "likes",
-      ])
-      res.send(201, response)
+    if (!card.owner.id === userId) {
+      throw new AccessError("У вас нет на это прав")
     }
-    throw new AccessError("У вас нет на это прав")
+    await Card.deleteOne(card)
+    res.send(201, card)
   } catch (err) {
     next(err)
   }
