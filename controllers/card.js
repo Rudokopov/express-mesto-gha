@@ -37,15 +37,18 @@ const deleteCard = async (req, res, next) => {
   try {
     const userId = req.userId
     const { id } = req.params
+
     const card = await Card.findById(id).populate(["owner", "likes"])
+    console.log(userId)
+    console.log(card.owner.id)
     if (!card) {
       throw new NotFound("Карточка с таким ID не найдена")
     }
-    if (!card.owner.id === userId) {
+    if (card.owner.id !== userId) {
       throw new AccessError("У вас нет на это прав")
     }
     await Card.deleteOne(card)
-    res.send(201, card)
+    res.send(card)
   } catch (err) {
     next(err)
   }
