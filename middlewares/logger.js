@@ -1,8 +1,8 @@
 // middlewares/logger.js
 
 // импортируем нужные модули
-const winston = require("winston")
-const expressWinston = require("express-winston")
+import winston from "winston"
+import expressWinston from "express-winston"
 
 // Создадим logger запросов
 const requestLogger = expressWinston.logger({
@@ -18,7 +18,4 @@ const errorLogger = expressWinston.errorLogger({
   msg: "HTTP {{req.method}} {{req.url}}",
 })
 
-module.exports = {
-  requestLogger,
-  errorLogger,
-}
+export { requestLogger, errorLogger }

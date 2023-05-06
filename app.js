@@ -5,7 +5,7 @@ import celebrate from "celebrate"
 import { handleErrors } from "./middlewares/handleErrors.js"
 import { PORT, DATA_BASE } from "./config.js"
 
-const { requestLogger, errorLogger } = require("./middlewares/logger")
+import { requestLogger, errorLogger } from "./middlewares/logger.js"
 
 const app = express()
 app.use(express.json())
