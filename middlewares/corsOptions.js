@@ -7,7 +7,7 @@ const allowedCors = [
   "http://localhost:3002",
   "localhost:3002",
 ]
-
+const DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE"
 export const corsOptions = {
   origin: allowedCors, // Массив доменов, с которых разрешены кросс-доменные запросы
   methods: DEFAULT_ALLOWED_METHODS, // Разрешенные HTTP-методы
@@ -15,8 +15,6 @@ export const corsOptions = {
   optionsSuccessStatus: 200, // Установить статус успешного ответа для метода OPTIONS
   allowedHeaders: "*", // Разрешить все заголовки в запросе
 }
-
-// const DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE"
 
 // eslint-disable-next-line consistent-return
 // export const checkCORS = (req, res, next) => {
