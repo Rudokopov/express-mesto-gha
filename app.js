@@ -4,7 +4,7 @@ import dotenv from "dotenv"
 import { router } from "./routes/index.js"
 import celebrate from "celebrate"
 import { handleErrors } from "./middlewares/handleErrors.js"
-import checkCors from "./middlewares/checkCors.js"
+import { checkCors } from "./middlewares/checkCors.js"
 import { PORT, DATA_BASE } from "./config.js"
 import { requestLogger, errorLogger } from "./middlewares/logger.js"
 dotenv.config()
