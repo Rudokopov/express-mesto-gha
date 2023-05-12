@@ -20,14 +20,11 @@ const createCard = async (req, res, next) => {
     const id = req.userId
     const { name, link } = req.body
     const card = await Card.create({ name, link, owner: id })
+    if (!card) {
+      throw new NotFound("Ошибка при создании карточки")
+    }
     const populatedCard = await card.populate("owner")
     res.send(populatedCard)
-    // const response = await Card.create({ name, link, owner: id }).populate([
-    //   "owner",
-    // ])
-    // if (!response) {
-    //   throw new NotFound("Карточка не найдена")
-    // }
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
       next(new BadRequestError("Переданы некорректные данные"))
