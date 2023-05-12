@@ -63,7 +63,7 @@ const likeCard = async (req, res, next) => {
     if (!response) {
       throw new NotFound("Карточка с похожим ID не найдена")
     }
-    res.send({ likes: response.likes.length })
+    res.send(response)
   } catch (err) {
     if (err instanceof mongoose.Error.CastError) {
       next(new BadRequestError("Переданы некорректные данные"))
@@ -75,16 +75,17 @@ const likeCard = async (req, res, next) => {
 
 const dislakeCard = async (req, res, next) => {
   try {
+    const ownerId = req.userId
     const { id } = req.params
     const response = await Card.findByIdAndUpdate(
       id,
-      { $pull: { likes: req.userId } },
+      { $pull: { likes: ownerId } },
       { new: true }
     )
     if (!response) {
       throw new NotFound("Карточка с похожим ID не найдена")
     }
-    res.send({ likes: response.likes.length })
+    res.send(response)
   } catch (err) {
     if (err instanceof mongoose.Error.CastError) {
       next(new BadRequestError("Переданы некорректные данные"))

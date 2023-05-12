@@ -96,16 +96,21 @@ const login = async (req, res, next) => {
     if (!isValid) {
       throw new AccessError("Неправильные почта или пароль")
     }
+    const { NODE_ENV, JWT_SECRET } = process.env
+    if (NODE_ENV !== "production") {
+      const NODE_ENV = "production"
+    }
     const token = jwt.sign(
       {
         _id: user._id,
       },
-      "secret-key-word",
+      NODE_ENV === "production" ? JWT_SECRET : "secret-key-word",
       {
         expiresIn: "7d",
       }
     )
     const { passwordHash, ...userData } = user._doc
+    // res.setHeader("Authorization", `Bearer ${token}`)
     res.send({
       ...userData,
       token,
