@@ -1,9 +1,9 @@
 // Массив доменов, с которых разрешены кросс-доменные запросы
 const allowedCors = [
-  "http://mesto-rudokopov.nomoredomains.monster",
-  "https://mesto-rudokopov.nomoredomains.monster",
-  "http://localhost:3000",
-  "http://localhost:3002",
+  "http://mesto-rudokopov.nomoredomains.monster/",
+  "https://mesto-rudokopov.nomoredomains.monster/",
+  "http://localhost:3000/",
+  "http://localhost:3002/",
 ]
 
 const DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE"

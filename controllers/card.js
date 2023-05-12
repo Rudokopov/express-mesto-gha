@@ -19,9 +19,9 @@ const createCard = async (req, res, next) => {
   try {
     const id = req.userId
     const { name, link } = req.body
-    const response = await (
-      await Card.create({ name, link, owner: id })
-    ).populate(["owner"])
+    const response = await Card.create({ name, link, owner: id }).populate([
+      "owner",
+    ])
 
     res.send(201, response)
   } catch (err) {
