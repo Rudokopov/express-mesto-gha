@@ -1,16 +1,28 @@
-[![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
-# Проект Mesto фронтенд + бэкенд
+# [Бэкенд проекта Mesto](https://mesto-rudokopov.nomoredomains.monster/)
 
+Full-stack приложение с возможностью регистрации, аунтетификации, изменением пользовательских данных, а так же добавлением и удалением карточек.
 
-## Директории
+**Функционал:**
 
-`/routes` — папка с файлами роутера  
-`/controllers` — папка с файлами контроллеров пользователя и карточки   
-`/models` — папка с файлами описания схем пользователя и карточки  
-  
-Остальные директории вспомогательные, создаются при необходимости разработчиком
+- Возможность поставить лайк на карточке
+- Просмотр фотографии в полный размер при клике на неё
+- Возможность оценивать карточки других пользователей и смотреть кто сколько лайков поставил
+- Возможность менять информацию о профиле (имя, о себе, аватар)
+- Добавление новых карточек
 
-## Запуск проекта
+**Какие технологии используются:**
 
-`npm run start` — запускает сервер   
-`npm run dev` — запускает сервер с hot-reload
+- React
+- Node JS
+- MongoDB
+- Express
+- Mongoose
+- CORS
+
+---
+
+**Параметры**
+
+IP 51.250.92.24
+Frontend https://mesto-rudokopov.nomoredomains.monster/
+Backend https://api.mesto-rudokopov.nomoredomains.monster/
